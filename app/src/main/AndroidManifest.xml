@@ -40,7 +40,13 @@
         <activity
             android:name=".MapsActivity"
             android:label="Map"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="pw.vasilis.navigator.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MainActivity" />
+        </activity>
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
     </application>
