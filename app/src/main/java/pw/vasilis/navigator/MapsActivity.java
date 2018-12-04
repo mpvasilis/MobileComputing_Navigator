@@ -1,6 +1,5 @@
 package pw.vasilis.navigator;
 
-import android.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 

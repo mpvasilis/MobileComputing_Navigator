@@ -23,7 +23,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity  implements GPSCallback{
     private GPSManager gpsManager = null;
@@ -92,6 +94,13 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback{
         int kmph_int= (int) kmphSpeed;
         txtview.setText(kmph_int+"");
         Log.i("GPS_UPDATE", ""+lat+" "+longt+" "+currentSpeed+" "+kmphSpeed);
+
+        Map<String, String> postData = new HashMap<>();
+        postData.put("speed", speed+"");
+        postData.put("longitude", lat+"");
+        postData.put("latitude", longt+"");
+        HttpPostAsyncTask task = new HttpPostAsyncTask(postData);
+        task.execute( "http://160.40.60.207:8080/navigator.ws/server/getData");
 
     }
     @Override
