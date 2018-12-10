@@ -123,7 +123,7 @@ public class GPSManager implements android.location.GpsStatus.Listener
             ActivityCompat.requestPermissions((Activity) mcontext, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
         }
         int timetofix = locationManager.getGpsStatus(null).getTimeToFirstFix();
-        Log.i("GPs", "Time to first fix = "+String.valueOf(timetofix));
+        Log.i("GPS", "Time to first fix = "+String.valueOf(timetofix));
         for (GpsSatellite sat : locationManager.getGpsStatus(null).getSatellites()) {
             if(sat.usedInFix()) {
                 SatellitesInFix++;

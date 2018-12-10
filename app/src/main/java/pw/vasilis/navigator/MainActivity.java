@@ -18,6 +18,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +30,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity  implements GPSCallback{
+public class MainActivity extends AppCompatActivity  implements GPSCallback, HttpPostAsyncResponse{
     private GPSManager gpsManager = null;
     private double speed = 0.0;
     Boolean isGPSEnabled=false;
@@ -40,12 +43,18 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback{
     double lat;
     double longt;
 
+    TextView estimatedtxt;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         constraintLayout= findViewById(R.id.clayout);
+
         txtview = findViewById(R.id.speed);
+        estimatedtxt = findViewById(R.id.estimatedTime);
+
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
@@ -93,16 +102,38 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback{
         kmphSpeed = round((currentSpeed*3.6),0,BigDecimal.ROUND_HALF_UP);
         int kmph_int= (int) kmphSpeed;
         txtview.setText(kmph_int+"");
-        Log.i("GPS_UPDATE", ""+lat+" "+longt+" "+currentSpeed+" "+kmphSpeed);
-
         Map<String, String> postData = new HashMap<>();
         postData.put("speed", speed+"");
         postData.put("longitude", lat+"");
         postData.put("latitude", longt+"");
-        HttpPostAsyncTask task = new HttpPostAsyncTask(postData);
-        task.execute( "http://160.40.60.207:8080/navigator.ws/server/getData");
+
+        new HttpPostAsyncTask(postData,this).execute( "http://vasilis.pw/mobilecomputing/getData.php");
+        Log.i("GPS_UPDATE", ""+lat+" "+longt+" "+currentSpeed+" "+kmphSpeed);
 
     }
+
+
+    @Override
+    public void postfinished(String result){
+        try {
+            JSONObject jsonObj = new JSONObject(result);
+            String estimated = jsonObj.getString("estimated");
+            estimatedtxt.setText(estimated);
+            String scheduled = jsonObj.getString("scheduled");
+            String rtrip = jsonObj.getString("rtrip");
+            String rdistance = jsonObj.getString("rdistance");
+            String pspeed = jsonObj.getString("pspeed");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        Log.i("GPS_HTTP_POST_MAIN", result);
+    }
+
     @Override
     protected void onDestroy() {
         gpsManager.stopListening();
