@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
     double longt;
 
     TextView estimatedtxt;
-
+    TextView remainingTimetxt;
+    TextView remainingKmtxt;
+    TextView scheduledtxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
 
         txtview = findViewById(R.id.speed);
         estimatedtxt = findViewById(R.id.estimatedTime);
+        remainingTimetxt = findViewById(R.id.remainingTime);
+        remainingKmtxt = findViewById(R.id.remainingKm);
+        scheduledtxt= findViewById(R.id.scheduledTime);
 
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
@@ -117,11 +122,19 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
     public void postfinished(String result){
         try {
             JSONObject jsonObj = new JSONObject(result);
+
             String estimated = jsonObj.getString("estimated");
             estimatedtxt.setText(estimated);
+
             String scheduled = jsonObj.getString("scheduled");
+            scheduledtxt.setText(scheduled);
+
             String rtrip = jsonObj.getString("rtrip");
+            remainingTimetxt.setText(rtrip);
+
             String rdistance = jsonObj.getString("rdistance");
+            remainingKmtxt.setText(rdistance);
+
             String pspeed = jsonObj.getString("pspeed");
 
         } catch (JSONException e) {
