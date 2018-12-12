@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -116,6 +117,7 @@ public class GPSManager implements android.location.GpsStatus.Listener
             ex.printStackTrace();
         }
     }
+
     public void onGpsStatusChanged(int event) {
         int Satellites = 0;
         int SatellitesInFix = 0;

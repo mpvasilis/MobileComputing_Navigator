@@ -22,13 +22,15 @@ public class HttpPostAsyncTask extends AsyncTask<String, String, String> {
 
     // This is the JSON body of the post
     public HttpPostAsyncResponse delegate = null;
+    public HttpPostType type = null;
     JSONObject postData;
 
     // This is a constructor that allows you to pass in the JSON body
-    public HttpPostAsyncTask(Map<String, String> postData, HttpPostAsyncResponse delegate) {
+    public HttpPostAsyncTask(Map<String, String> postData, HttpPostType type, HttpPostAsyncResponse delegate) {
         if (postData != null) {
             this.postData = new JSONObject(postData);
             this.delegate=delegate;
+            this.type = type;
         }
     }
 
@@ -40,7 +42,7 @@ public class HttpPostAsyncTask extends AsyncTask<String, String, String> {
 
    @Override
     protected void onPostExecute(String result) {
-        delegate.postfinished(result);
+       delegate.postfinished(type, result);
     }
 
     @Override

@@ -2,6 +2,7 @@ package pw.vasilis.navigator;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,7 +28,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         lat = getIntent().getDoubleExtra("lat", 0);
         longt = getIntent().getDoubleExtra("long", 0);
-
 
     }
 

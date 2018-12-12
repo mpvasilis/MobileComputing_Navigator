@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -25,9 +27,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity  implements GPSCallback, HttpPostAsyncResponse{
@@ -37,7 +37,10 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
     LocationManager locationManager;
     double currentSpeed,kmphSpeed;
     TextView txtview;
+
     ImageButton imageButton;
+    ImageButton trafficbutton;
+
     ConstraintLayout constraintLayout;
     String check_day_night = "day";
     double lat;
@@ -73,11 +76,15 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
         if(isGPSEnabled) {
             gpsManager.startListening(getApplicationContext());
             gpsManager.setGPSCallback(this);
+            Toast.makeText(this, "Please wait for GPS to fix. This may take a while.", Toast.LENGTH_SHORT).show();
+
         } else {
             gpsManager.showSettingsAlert();
+            Toast.makeText(this, "Please enable GPS.", Toast.LENGTH_SHORT).show();
         }
 
         imageButton = findViewById(R.id.imageButton);
+        trafficbutton = findViewById(R.id.trafficbutton);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +92,16 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
                 Intent i = new Intent(MainActivity.this, MapsActivity.class);
                 i.putExtra("lat",lat);
                 i.putExtra("long",longt);
+                startActivity(i);
+            }
+        });
+
+        trafficbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, TrafficActivity.class);
+                i.putExtra("lat", lat);
+                i.putExtra("long", longt);
                 startActivity(i);
             }
         });
@@ -112,39 +129,46 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
         postData.put("longitude", lat+"");
         postData.put("latitude", longt+"");
 
-        new HttpPostAsyncTask(postData,this).execute( "http://vasilis.pw/mobilecomputing/getData.php");
+        if (isNetworkAvailable()) {
+            new HttpPostAsyncTask(postData, HttpPostType.GET_DATA_POST, this).execute("http://vasilis.pw/mobilecomputing/getData.php");
+        } else {
+            Log.d("MAIN", "No internet connection - Cannot post to server GPS data");
+
+        }
         Log.i("GPS_UPDATE", ""+lat+" "+longt+" "+currentSpeed+" "+kmphSpeed);
 
     }
 
 
     @Override
-    public void postfinished(String result){
-        try {
-            JSONObject jsonObj = new JSONObject(result);
+    public void postfinished(HttpPostType type, String result) {
 
-            String estimated = jsonObj.getString("estimated");
-            estimatedtxt.setText(estimated);
+        if (type == HttpPostType.GET_DATA_POST) {
 
-            String scheduled = jsonObj.getString("scheduled");
-            scheduledtxt.setText(scheduled);
+            try {
+                JSONObject jsonObj = new JSONObject(result);
 
-            String rtrip = jsonObj.getString("rtrip");
-            remainingTimetxt.setText(rtrip);
+                String estimated = jsonObj.getString("estimated");
+                estimatedtxt.setText(estimated);
 
-            String rdistance = jsonObj.getString("rdistance");
-            remainingKmtxt.setText(rdistance);
+                String scheduled = jsonObj.getString("scheduled");
+                scheduledtxt.setText(scheduled);
 
-            String pspeed = jsonObj.getString("pspeed");
+                String rtrip = jsonObj.getString("rtrip");
+                remainingTimetxt.setText(rtrip);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+                String rdistance = jsonObj.getString("rdistance");
+                remainingKmtxt.setText(rdistance);
+
+                String pspeed = jsonObj.getString("pspeed");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.i("GPS_HTTP_POST_MAIN", result);
         }
 
-
-
-
-        Log.i("GPS_HTTP_POST_MAIN", result);
     }
 
     @Override
@@ -175,14 +199,27 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
                 check_day_night = "day";
                 constraintLayout.setBackgroundResource(R.drawable.wbg);
                 imageButton.setImageResource(R.drawable.wmap);
+                trafficbutton.setImageResource(R.color.white);
+                trafficbutton.setBackgroundResource(R.color.white);
+
             } else {
                 check_day_night = "night";
                 constraintLayout.setBackgroundResource(R.drawable.bbg);
                 imageButton.setImageResource(R.drawable.bmap);
+                trafficbutton.setImageResource(R.color.black);
+                trafficbutton.setBackgroundResource(R.color.black);
+
+
             }
 
         System.out.println("Now is " + check_day_night);
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }
