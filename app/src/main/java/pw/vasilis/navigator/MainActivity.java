@@ -145,26 +145,15 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
 
         if (type == HttpPostType.GET_DATA_POST) {
 
-            try {
-                JSONObject jsonObj = new JSONObject(result);
+            JsonParser data = new JsonParser(result);
 
-                String estimated = jsonObj.getString("estimated");
-                estimatedtxt.setText(estimated);
+            estimatedtxt.setText(data.getEstimated());
 
-                String scheduled = jsonObj.getString("scheduled");
-                scheduledtxt.setText(scheduled);
+            scheduledtxt.setText(data.getScheduled());
 
-                String rtrip = jsonObj.getString("rtrip");
-                remainingTimetxt.setText(rtrip);
+            remainingTimetxt.setText(data.getRtrip());
 
-                String rdistance = jsonObj.getString("rdistance");
-                remainingKmtxt.setText(rdistance);
-
-                String pspeed = jsonObj.getString("pspeed");
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            remainingKmtxt.setText(data.getRdistance());
 
             Log.i("GPS_HTTP_POST_MAIN", result);
         }
