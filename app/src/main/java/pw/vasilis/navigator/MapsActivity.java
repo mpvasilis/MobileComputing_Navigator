@@ -1,7 +1,9 @@
 package pw.vasilis.navigator;
 
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -10,12 +12,21 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     double lat=0;
     double longt=0;
+    String points = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +39,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         lat = getIntent().getDoubleExtra("lat", 0);
         longt = getIntent().getDoubleExtra("long", 0);
+        points = getIntent().getStringExtra("points");
+        Log.i("MAPS_ACTIVITY", points);
+
+        if (lat == 0 && longt == 0)
+            Toast.makeText(this, "No GPS location. Please wait GPS to fix.", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -35,9 +51,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(lat, longt);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("YOU"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng mylocation = new LatLng(lat, longt);
+        mMap.addMarker(new MarkerOptions().position(mylocation).title("Your location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(mylocation));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(16.0f));
+
+        if (lat != 0 && longt != 0) {
+
+            ArrayList<LatLng> coordList = new ArrayList<LatLng>();
+
+            JSONArray arr = null;
+            try {
+                arr = new JSONArray(points);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for (int i = 0; i < arr.length(); i++) {
+                try {
+                    coordList.add(new LatLng(Double.parseDouble(arr.getString(i).split(" ")[0].replace(",", "")), Double.parseDouble(arr.getString(i).split(" ")[1])));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.addAll(coordList);
+            polylineOptions
+                    .width(5)
+                    .color(Color.RED);
+
+            mMap.addPolyline(polylineOptions);
+        }
     }
 }

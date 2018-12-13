@@ -69,6 +69,11 @@ public class JsonParser {
 
     }
 
+    public JSONArray getPoints() {
+        return points;
+    }
+
+
     public String getEstimated() {
         return estimated.split(" ")[1];
     }

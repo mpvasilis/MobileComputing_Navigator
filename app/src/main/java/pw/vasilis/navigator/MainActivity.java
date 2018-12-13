@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,8 +56,7 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
 
     ImageView arrowimg;
 
-    Boolean arrowimagesetfromspeed = false;
-    Boolean arrowimagesetfromestimatedtime = false;
+    String points = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
                 Intent i = new Intent(MainActivity.this, MapsActivity.class);
                 i.putExtra("lat",lat);
                 i.putExtra("long",longt);
+                i.putExtra("points", points);
+
                 startActivity(i);
             }
         });
@@ -163,6 +165,8 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
             remainingTimetxt.setText(data.getRtrip());
 
             remainingKmtxt.setText(data.getRdistance());
+
+            points = data.getPoints().toString();
 
             try {
                 setArrow(Integer.parseInt(data.getPspeed()), Integer.parseInt(data.getCspeed()), data.getScheduled(), data.getEstimated());
