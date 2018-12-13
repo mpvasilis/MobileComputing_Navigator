@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(mylocation));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16.0f));
 
-        if (lat != 0 && longt != 0) {
+        if (isJSONValid(points)) {
 
             ArrayList<LatLng> coordList = new ArrayList<LatLng>();
 
@@ -83,5 +84,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.addPolyline(polylineOptions);
         }
+    }
+
+    public boolean isJSONValid(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            try {
+                new JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
     }
 }
