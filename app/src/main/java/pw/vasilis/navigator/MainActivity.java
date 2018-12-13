@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +52,11 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
     TextView remainingTimetxt;
     TextView remainingKmtxt;
     TextView scheduledtxt;
+
+    ImageView arrowimg;
+
+    Boolean arrowimagesetfromspeed = false;
+    Boolean arrowimagesetfromestimatedtime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +92,8 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
 
         imageButton = findViewById(R.id.imageButton);
         trafficbutton = findViewById(R.id.trafficbutton);
+
+        arrowimg = findViewById(R.id.arrow);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +164,12 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
 
             remainingKmtxt.setText(data.getRdistance());
 
+            try {
+                setArrow(Integer.parseInt(data.getPspeed()), Integer.parseInt(data.getCspeed()), data.getScheduled(), data.getEstimated());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             Log.i("GPS_HTTP_POST_MAIN", result);
         }
 
@@ -203,6 +218,46 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
 
         System.out.println("Now is " + check_day_night);
     }
+
+    public void setArrow(int pspeed, int cspeed, String scheduledtime, String estimatedtime) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("kk:mm");
+        Date scheduled = formatter.parse(scheduledtime);
+        Date estimated = formatter.parse(estimatedtime);
+
+        if ((pspeed - cspeed) > 5) {
+            setArrowUp();
+
+        } else if ((cspeed - pspeed) > 5) {
+            setArrowDown();
+        } else if (estimated.after(scheduled)) {
+            estimatedtxt.setTextColor(Color.RED);
+            setArrowUp();
+        } else {
+            setArrowNothing();
+
+        }
+
+        if (estimated.after(scheduled)) {
+            estimatedtxt.setTextColor(Color.RED);
+        } else {
+            estimatedtxt.setTextColor(Color.parseColor("#01aabf"));
+        }
+    }
+
+    public void setArrowUp() {
+        arrowimg.setImageResource(R.drawable.up);
+    }
+
+    public void setArrowDown() {
+        arrowimg.setImageResource(R.drawable.down);
+    }
+
+    public void setArrowNothing() {
+        arrowimg.setImageResource(android.R.color.transparent);
+    }
+
+
+
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

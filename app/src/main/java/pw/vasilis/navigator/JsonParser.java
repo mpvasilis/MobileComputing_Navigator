@@ -70,11 +70,11 @@ public class JsonParser {
     }
 
     public String getEstimated() {
-        return estimated;
+        return estimated.split(" ")[1];
     }
 
     public String getScheduled() {
-        return scheduled;
+        return scheduled.split(" ")[1];
     }
 
     public String getRtrip() {
@@ -82,7 +82,7 @@ public class JsonParser {
     }
 
     public String getRdistance() {
-        return rdistance + " " + distancemetric;
+        return rdistance + "" + distancemetric;
     }
 
     public String getPspeed() {

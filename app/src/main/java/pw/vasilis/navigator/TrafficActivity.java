@@ -1,7 +1,10 @@
 package pw.vasilis.navigator;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,7 +109,13 @@ public class TrafficActivity extends AppCompatActivity implements HttpPostAsyncR
                 postData.put("latitude", longt + "");
                 postData.put("traffic", trafficmsg);
                 Log.d("TRAFFIC", "Posting: lat:" + lat + " long:" + longt + " traffic:" + trafficmsg);
-                new HttpPostAsyncTask(postData, HttpPostType.TRAFFIC_POST, TrafficActivity.this).execute("http://160.40.60.207:8080/navigator.ws/server/postTrafficData");
+                if (isNetworkAvailable()) {
+                    new HttpPostAsyncTask(postData, HttpPostType.TRAFFIC_POST, TrafficActivity.this).execute("http://160.40.60.207:8080/navigator.ws/server/postTrafficData");
+                    Toast.makeText(TrafficActivity.this, "Sending traffic condition to server....", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(TrafficActivity.this, "No internet connection. Cannot send traffic condition to server.", Toast.LENGTH_SHORT).show();
+
+                }
                 dialog.dismiss();
 
             }
@@ -116,6 +126,8 @@ public class TrafficActivity extends AppCompatActivity implements HttpPostAsyncR
     public void postfinished(HttpPostType type, String result) {
 
         if (type == HttpPostType.TRAFFIC_POST) {
+
+            Toast.makeText(TrafficActivity.this, "Traffic condition sent successfully.", Toast.LENGTH_SHORT).show();
 
             try {
                 JSONObject jsonObj = new JSONObject(result);
@@ -128,6 +140,13 @@ public class TrafficActivity extends AppCompatActivity implements HttpPostAsyncR
             Log.i("GPS_HTTP_POST_TRAFFIC", result);
         }
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }
