@@ -16,16 +16,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import javax.xml.transform.Result;
-
 public class HttpPostAsyncTask extends AsyncTask<String, String, String> {
 
-    // This is the JSON body of the post
     public HttpPostAsyncResponse delegate = null;
     public HttpPostType type = null;
     JSONObject postData;
 
-    // This is a constructor that allows you to pass in the JSON body
     public HttpPostAsyncTask(Map<String, String> postData, HttpPostType type, HttpPostAsyncResponse delegate) {
         if (postData != null) {
             this.postData = new JSONObject(postData);
