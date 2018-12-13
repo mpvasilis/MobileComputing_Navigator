@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
         postData.put("latitude", longt+"");
 
         if (isNetworkAvailable()) {
-            new HttpPostAsyncTask(postData, HttpPostType.GET_DATA_POST, this).execute("http://vasilis.pw/mobilecomputing/getData.php");
+            new HttpPostAsyncTask(postData, HttpPostType.GET_DATA_POST, this).execute("http://vasilis.pw/mobilecomputing/getData.php"); //160.40.60.207:8080/navigator.ws/server/getData
         } else {
             Log.d("MAIN", "No internet connection - Cannot post to server GPS data");
 
