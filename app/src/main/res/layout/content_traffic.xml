@@ -39,7 +39,7 @@
         app:layout_constraintStart_toEndOf="@+id/trafficlow"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/trafficlow" />
+        app:srcCompat="@drawable/trafficnormal" />
 
     <ImageButton
         android:id="@+id/trafficdense"
@@ -55,5 +55,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/trafficnormal"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/trafficlow" />
+        app:srcCompat="@drawable/trafficdense" />
 </android.support.constraint.ConstraintLayout>
