@@ -30,9 +30,6 @@ public class JsonParser {
 
     private String timemetric;
 
-    public JsonParser() {
-    }
-
 
     public JsonParser(String jsonstr) {
         try {
