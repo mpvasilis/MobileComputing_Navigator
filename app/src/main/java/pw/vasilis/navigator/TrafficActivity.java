@@ -126,17 +126,7 @@ public class TrafficActivity extends AppCompatActivity implements HttpPostAsyncR
     public void postfinished(HttpPostType type, String result) {
 
         if (type == HttpPostType.TRAFFIC_POST) {
-
             Toast.makeText(TrafficActivity.this, "Traffic condition sent successfully.", Toast.LENGTH_SHORT).show();
-
-            try {
-                JSONObject jsonObj = new JSONObject(result);
-                //TODO get http status code (int)
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             Log.i("GPS_HTTP_POST_TRAFFIC", result);
         }
 
