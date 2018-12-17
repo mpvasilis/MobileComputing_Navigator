@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -129,13 +130,14 @@ public class MainActivity extends AppCompatActivity  implements GPSCallback, Htt
         kmphSpeed = round((currentSpeed*3.6),0,BigDecimal.ROUND_HALF_UP);
         int kmph_int= (int) kmphSpeed;
         txtview.setText(kmph_int+"");
-        Map<String, String> postData = new HashMap<>();
-        postData.put("speed", speed+"");
-        postData.put("longitude", lat+"");
-        postData.put("latitude", longt+"");
-
         if (isNetworkAvailable()) {
-            new HttpPostAsyncTask(postData, HttpPostType.GET_DATA_POST, this).execute("http://vasilis.pw/mobilecomputing/getData.php"); //160.40.60.207:8080/navigator.ws/server/getData
+
+            Map<String, String> postData = new HashMap<>();
+            postData.put("speed", speed + "");
+            postData.put("longitude", lat + "");
+            postData.put("latitude", longt + "");
+            new HttpPostAsyncTask(postData, HttpPostType.GET_DATA_POST, MainActivity.this).execute("http://160.40.60.207:8080/navigator.ws/server/getData");
+
         } else {
             Log.d("MAIN", "No internet connection - Cannot post to server GPS data");
 

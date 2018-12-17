@@ -22,7 +22,7 @@ import java.util.List;
 
 public class GPSManager implements android.location.GpsStatus.Listener
 {
-    private static final int gpsMinTime = 0;
+    private static final int gpsMinTime = 120000; //2 λεπτά
     private static final int gpsMinDistance = 0;
     private static LocationManager locationManager = null;
     private static LocationListener locationListener = null;
